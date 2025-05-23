@@ -69,15 +69,19 @@ class AuthenticationController extends ApiController
         /** @var User $user */
         $user = Auth::user();
 
-        if ($user) {
-            $user->token()->revoke();
+        if (!$user || !$user->currentAccessToken()) {
             return response()->json([
-                'success' => true,
-                'message' => 'Logged out successfully',
-            ], 200);
+                'success' => false,
+                'message' => 'No authenticated user or access token found.',
+            ], 401);
         }
 
-        return response()->json(['success' => false, 'message' => "No authenticated user found."], 401);
+        $user->currentAccessToken()->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Logged out successfully.',
+        ]);
     }
 
     /**
