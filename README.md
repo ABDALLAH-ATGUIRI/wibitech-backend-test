@@ -87,7 +87,7 @@ routes/
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/wibitech-backend-test.git
+[git clone [https://github.com/your-username/wibitech-backend-test.git](https://github.com/ABDALLAH-ATGUIRI/wibitech-backend-test.git)]
 cd wibitech-backend-test
 
 # Install dependencies
