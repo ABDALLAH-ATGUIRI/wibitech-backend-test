@@ -2,8 +2,11 @@
 
 namespace App\Repositories\Contracts;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection as SupportCollection;
 
 interface RepositoryInterface
 {
@@ -35,9 +38,9 @@ interface RepositoryInterface
      * Summary of update
      * @param mixed $id
      * @param array $data
-     * @return Model
+     * @return bool
      */
-    public function update($id, array $data): Model;
+    public function update($id, array $data): bool;
 
     /**
      * Summary of delete
@@ -48,8 +51,18 @@ interface RepositoryInterface
 
     /**
      * Summary of search
-     * @param array $data
-     * @return Collection
+     * @param Collection $filters
+     * @param array $relations
+     * @return Builder
      */
-    public function search(array $data): Collection;
+    public function search(SupportCollection $filters, array $relations = []): Builder;
+
+    /**
+     * Summary of getPaginated
+     * @param array $filters
+     * @param array $columns
+     * @param array $relations
+     * @return LengthAwarePaginator
+     */
+    public function getPaginated(array $filters = [], array $columns = ['*'], array $relations = []): LengthAwarePaginator;
 }

@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Enums\UserRole;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -52,7 +54,26 @@ class User extends Authenticatable
      */
     public function isAdmin()
     {
-        // Adjust this logic based on your application's admin identification
-        return $this->role === 'admin';
+        return $this->role === UserRole::ADMIN;
+    }
+
+    /**
+     * Determine if the user has client privileges.
+     *
+     * @return bool
+     */
+    public function isUser()
+    {
+        return $this->role === UserRole::USER;
+    }
+
+    /**
+     * Summary of hasRole
+     * @param mixed $role
+     * @return bool
+     */
+    public function hasRole($role): bool
+    {
+        return $this->role === $role;
     }
 }

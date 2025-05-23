@@ -3,8 +3,11 @@
 namespace App\Repositories;
 
 use App\Repositories\Contracts\RepositoryInterface;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection as SupportCollection;
 
 class BaseRepository implements RepositoryInterface
 {
@@ -27,7 +30,7 @@ class BaseRepository implements RepositoryInterface
      * @param array $relations
      * @return Collection
      */
-    public function all(array $columns = ['*'], array $relations = []):Collection
+    public function all(array $columns = ['*'], array $relations = []): Collection
     {
         return $this->model->with($relations)->get($columns);
     }
@@ -39,7 +42,7 @@ class BaseRepository implements RepositoryInterface
      * @param array $relations
      * @return Model
      */
-    public function find($id, array $columns = ['*'], array $relations = []):Model
+    public function find($id, array $columns = ['*'], array $relations = []): Model
     {
         return $this->model->with($relations)->find($id, $columns);
     }
@@ -49,7 +52,7 @@ class BaseRepository implements RepositoryInterface
      * @param array $data
      * @return Model
      */
-    public function create(array $data):Model
+    public function create(array $data): Model
     {
         return $this->model->create($data);
     }
@@ -58,9 +61,9 @@ class BaseRepository implements RepositoryInterface
      * Summary of update
      * @param mixed $id
      * @param array $data
-     * @return Model
+     * @return bool
      */
-    public function update($id, array $data):Model
+    public function update($id, array $data): bool
     {
         return $this->model->find($id)->update($data);
     }
@@ -70,18 +73,42 @@ class BaseRepository implements RepositoryInterface
      * @param mixed $id
      * @return bool
      */
-    public function delete($id):bool
+    public function delete($id): bool
     {
         return $this->model->find($id)->delete();
     }
 
     /**
      * Summary of search
-     * @param array $data
-     * @return Collection
+     * @param Collection $filters
+     * @return EloquentBuilder
      */
-    public function search(array $data):Collection
+    public function search(SupportCollection $filters, array $relations = []): EloquentBuilder
     {
-        return $this->model->where($data)->get();
+        $query = $this->model->with($relations);
+
+        foreach ($filters as $key => $value) {
+            $query->where($key, $value);
+        }
+
+        return $query;
     }
+
+    /**
+     * Summary of getPaginated
+     * @param array $data
+     * @return LengthAwarePaginator
+     */
+    public function getPaginated(array $filters = [], array $columns = ['*'], array $relations = []): LengthAwarePaginator
+    {
+        $filterData = collect($filters)->except(['page', 'per_page']);
+
+        $query = $this->search($filterData, $relations);
+
+        $perPage = $filters['per_page'] ?? 10;
+        $page = $filters['page'] ?? 1;
+
+        return $query->paginate($perPage, $columns, 'page', $page);
+    }
+
 }

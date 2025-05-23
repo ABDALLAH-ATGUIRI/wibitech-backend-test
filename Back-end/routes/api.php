@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthenticationController;
+use App\Http\Controllers\Api\TaskController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -25,7 +26,16 @@ Route::prefix('v1')->group(function () {
         Route::post('/logout', [AuthenticationController::class, 'logout'])->name('logout');
         Route::get('/me', [AuthenticationController::class, 'me'])->name('me');
 
-        // Admin-only routes
-        Route::get('/users', action: [UserController::class, 'index'])->name('admin.users.index')->middleware('is.admin');
+        // User routes
+        Route::get('/users', action: [UserController::class, 'index']);
+
+        // Task routes
+        Route::group(['prefix' => 'tasks'], function () {
+            Route::get('/', action: [TaskController::class, 'index']);
+            Route::get('/{task}', [TaskController::class, 'show']);
+            Route::post('/', action: [TaskController::class, 'create']);
+            Route::put('/{task}', action: [TaskController::class, 'update']);
+            Route::delete('/{task}', action: [TaskController::class, 'destroy']);
+        });
     });
 });
