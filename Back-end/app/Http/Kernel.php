@@ -70,6 +70,5 @@ class Kernel extends HttpKernel
     protected $routeMiddleware = [
         // Other middlewares
         'use_access_token_from_cookie' => \App\Http\Middleware\UseAccessTokenFromCookie::class,
-        'is.admin' => \App\Http\Middleware\EnsureUserIsAdmin::class,
     ];
 }
