@@ -19,7 +19,7 @@ class TaskService extends BaseService
             $data["user_id"] = auth()->user()->id;
         }
 
-        return $this->taskRepository->getPaginated($data);
+        return $this->taskRepository->getPaginated($data, ["*"], ['user:username,id']);
     }
 
     public function create(array $data)

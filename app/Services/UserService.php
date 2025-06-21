@@ -26,7 +26,7 @@ class UserService extends BaseService
 
     public function getByFillers(array $fillers = []): Collection
     {
-        return $this->userRepository->all();
+        return $this->userRepository->search(collect($fillers))->get();
     }
 
     /**

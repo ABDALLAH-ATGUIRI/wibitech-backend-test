@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\Task\CreateUpdateRequest;
+use App\Http\Requests\Task\UpdateRequest;
 use App\Models\Task;
 use App\Services\TaskService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Request;
 use Throwable;
 
 class TaskController extends ApiController
@@ -22,10 +24,7 @@ class TaskController extends ApiController
     {
         $this->authorize('viewAny', Task::class);
 
-        return response()->json([
-            "success" => true,
-            "data" => $this->taskService->getPaginated(request()->all())
-        ]);
+        return response()->json($this->taskService->getPaginated(request()->all()), 200);
     }
 
     /**
@@ -47,7 +46,7 @@ class TaskController extends ApiController
         }
     }
 
-    public function update(CreateUpdateRequest $request, Task $task)
+    public function update(UpdateRequest $request, Task $task)
     {
         $this->authorize('update', $task);
         try {
@@ -59,12 +58,12 @@ class TaskController extends ApiController
         }
     }
 
-    public function destroy(Task $model)
+    public function destroy(Task $task)
     {
-        $this->authorize('delete', $model);
+        $this->authorize('delete', $task);
         try {
             return response()->json([
-                "success" => $this->taskService->delete($model->id),
+                "success" => $this->taskService->delete($task->id),
             ], 200);
         } catch (Throwable $th) {
             return response()->json(['success' => false, 'message' => "Something went wrong, please try again"], 500);

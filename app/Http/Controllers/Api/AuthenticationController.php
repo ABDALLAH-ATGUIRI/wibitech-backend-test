@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Requests\User\LoginRequest;
 use App\Http\Requests\User\RegisterRequest;
 use App\Http\Resources\AuthenticationResource;
 use App\Models\User;
 use App\Services\UserService;
+use Illuminate\Http\Request;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -44,13 +44,12 @@ class AuthenticationController extends ApiController
     /**
      * Log in an existing user.
      */
-    public function login(LoginRequest $request): JsonResponse
+    public function login(Request $request): JsonResponse
     {
         try {
-            if (!Auth::attempt($request->validated())) {
+            if (!Auth::attempt($request->only('username', 'password'))) {
                 throw new AuthenticationException('Invalid login credentials.');
             }
-
             $expiresIn = $request->remember_me ? 60 * 24 * 30 : 60; // 30 days if remembered, else 1 hour;
 
             return $this->userService->respondWithToken(Auth::user(), $expiresIn);

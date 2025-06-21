@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('v1')->group(function () {
     // Public routes
     Route::post('/register', [AuthenticationController::class, 'register'])->name('register');
-    Route::get('/login', [AuthenticationController::class, 'login'])->name('login');
+    Route::post('/login', [AuthenticationController::class, 'login'])->name('login');
 
     // Protected routes
     Route::middleware(['use_access_token_from_cookie', 'auth:sanctum'])->group(function () {
@@ -27,7 +27,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/me', [AuthenticationController::class, 'me'])->name('me');
 
         // User routes
-        Route::get('/users', action: [UserController::class, 'index']);
+        Route::post('/users', action: [UserController::class, 'index']);
 
         // Task routes
         Route::group(['prefix' => 'tasks'], function () {

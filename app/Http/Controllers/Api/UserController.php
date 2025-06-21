@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\User;
+use App\Http\Requests\User\SearchRequest;
 use App\Services\UserService;
-use Illuminate\Http\Request;
 
 class UserController extends ApiController
 {
@@ -15,12 +14,8 @@ class UserController extends ApiController
         $this->userService = $userService;
     }
 
-    public function index(Request $request)
+    public function index(SearchRequest $request)
     {
-        $this->authorize('viewAny', User::class);
-
-        return response()->json([
-            "data" => $this->userService->getByFillers()
-        ]);
+        return response()->json($this->userService->getByFillers($request->validated()), 200);
     }
 }

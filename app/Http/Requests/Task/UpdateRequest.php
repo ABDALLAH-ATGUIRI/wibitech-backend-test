@@ -7,7 +7,7 @@ use App\Models\User;
 use App\Http\Requests\RequestBase;
 use Illuminate\Validation\Rule;
 
-class CreateUpdateRequest extends RequestBase
+class UpdateRequest extends RequestBase
 {
     public function authorize()
     {
@@ -18,11 +18,11 @@ class CreateUpdateRequest extends RequestBase
     {
 
         return [
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['required', 'string'],
-            'status' => ['sometimes', 'string', Rule::in(TaskStatus::getValues())],
+            'title' => ['sometimes', 'string', 'max:255'],
+            'description' => ['sometimes', 'string'],
+            'status' => ['required', 'string', Rule::in(TaskStatus::getValues())],
             'user_id' => [
-                'required',
+                'sometimes',
                 'exists:users,id',
                 function ($attribute, $value, $fail) {
                     $user = User::find($value);
